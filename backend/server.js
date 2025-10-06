@@ -1,48 +1,44 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const multer = require('multer');
-const upload = multer();
 
 const productRoute = require('./routes/api/productRoute');
 
-// Connecting to the Database
-let mongodb_url = 'mongodb://localhost/';
-let dbName = 'yolomy';
+// MongoDB connection (Docker container name)
+const MONGODB_URI = process.env.MONGO_URI || 'mongodb://app-ip-mongo:27017/yolomy';
 
-// define a url to connect to the database
-const MONGODB_URI = process.env.MONGODB_URI || mongodb_url + dbName
-mongoose.connect(MONGODB_URI,{useNewUrlParser: true, useUnifiedTopology: true  } )
-let db = mongoose.connection;
-
-// Check Connection
-db.once('open', ()=>{
-    console.log('Database connected successfully')
+mongoose.connect(MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
 })
+.then(() => console.log('Database connected successfully'))
+.catch(err => {
+    console.error('MongoDB connection error:', err.message);
+    process.exit(1);
+});
 
-// Check for DB Errors
-db.on('error', (error)=>{
-    console.log(error);
-})
+// Initialize Express
+const app = express();
 
-// Initializing express
-const app = express()
-
-// Body parser middleware
-app.use(express.json())
-
-// 
-app.use(upload.array()); 
-
-// Cors 
+// Middleware
 app.use(cors());
+app.use(express.json());
 
-// Use Route
-app.use('/api/products', productRoute)
+// Root route
+app.get('/', (req, res) => {
+    res.json({ 
+        message: 'YOLO E-commerce API',
+        status: 'running',
+        endpoints: { products: '/api/products' }
+    });
+});
 
-// Define the PORT
-const PORT = process.env.PORT || 5000
+// API routes
+app.use('/api/products', productRoute);
 
-app.listen(PORT, ()=>{
-    console.log(`Server listening on port ${PORT}`)
-})
+// Start server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}`);
+    console.log(`MongoDB URI: ${MONGODB_URI}`);
+});
