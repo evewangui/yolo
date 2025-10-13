@@ -1,17 +1,29 @@
+# Node modules and logs
 node_modules
-npm-debug.log
-build
-.dockerignore
-**/.git
-**/.DS_Store
 **/node_modules
-**Dockerfile
-Dockerfile*
-.git
-.github
-.gitignore
+npm-debug.log
+
+# Build artifacts
+build
 dist/**
-README.md
-.vscode
 app-mongo-data
 app-mongo-data/
+
+# Docker files
+Dockerfile
+Dockerfile*
+.dockerignore
+
+# Git and GitHub
+.git
+**/.git
+.gitignore
+.github
+
+# IDE/editor files
+.vscode
+.DS_Store
+
+# Documentation
+README.md
+/
